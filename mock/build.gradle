@@ -1,0 +1,80 @@
+apply plugin: 'java'
+apply plugin: 'kotlin-multiplatform'
+apply plugin: 'kotlinx-serialization'
+
+
+kotlin {
+    jvm()
+
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation kotlin("stdlib-common")
+                implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core-common:$coroutinesVersion"
+                implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:$serializationVersion"
+                implementation "io.ktor:ktor-client-logging:$ktorVersion"
+                implementation "io.ktor:ktor-client-core:$ktorVersion"
+                implementation "io.ktor:ktor-client-json:$ktorVersion"
+                implementation "io.ktor:ktor-client-serialization:$ktorVersion"
+            }
+        }
+        commonTest {
+            kotlin.srcDir("src/test/kotlin")
+            dependencies {
+                implementation kotlin("test-common")
+                implementation kotlin("test-annotations-common")
+            }
+        }
+        jvmMain {
+            kotlin.srcDir('src/jvmMain/kotlin')
+            dependencies {
+                implementation kotlin("stdlib")
+            }
+        }
+        jvmTest {
+            dependencies {
+                implementation kotlin("test")
+                implementation kotlin("test-junit")
+            }
+        }
+/*
+        iosMain {
+            dependencies {
+                implementation Libs.coroutines
+            }
+        }
+
+ */
+    }
+}
+
+// This task attaches native framework built from ios module to Xcode project
+// Don't run this task directly,
+// Xcode runs this task itself during its build process when we configure it.
+// make sure all Gradle infrastructure exists (gradle.wrapper, gradlew)
+//and gradlew is in executable mode (chmod +x gradlew)
+//task packForXCode(type: Sync) {
+//    final File frameworkDir = new File(buildDir, "xcode-frameworks")
+//    final String mode = project.findProperty("XCODE_CONFIGURATION")?.toUpperCase() ?: 'DEBUG'
+//    final def framework = kotlin.targets.ios.binaries.getFramework("common", mode)
+//
+//    inputs.property "mode", mode
+//    dependsOn framework.linkTask
+//
+//    from { framework.outputFile.parentFile }
+//    into frameworkDir
+//
+//    doLast {
+//        new File(frameworkDir, 'gradlew').with {
+//            text = "#!/bin/bash\nexport 'JAVA_HOME=${System.getProperty("java.home")}'\ncd '${rootProject.rootDir}'\n./gradlew \$@\n"
+//            setExecutable(true)
+//        }
+//    }
+//}
+
+//tasks.build.dependsOn packForXCode
+
+// workaround for https://youtrack.jetbrains.com/issue/KT-27170
+configurations {
+    compileClasspath
+}

@@ -1,0 +1,23 @@
+package com.joyable.mock
+
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class WireMockMapping(
+   val request: Request,
+   val response: Response
+)
+
+@Serializable
+data class Request(
+    val method: String,
+    val url: String
+)
+
+@Serializable
+data class Response(
+    val status: Int,
+    val body: String,
+    val headers: Map<String, String>? = null
+)
+
